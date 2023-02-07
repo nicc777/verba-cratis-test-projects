@@ -1,0 +1,31 @@
+---
+apiVersion: v1-alpha
+kind: Project
+metadata:
+  name: local-docker-install-project
+  environments:
+  - default
+spec:
+  includeFileRegex:
+  - '.*\.yml'
+  - '.*\.yaml'
+  locations:
+    directories:
+    - /tmp/local-docker-install-project
+---
+apiVersion: v1-alpha
+kind: Project
+metadata:
+  name: hello-world-project
+  environments:
+  - default
+spec:
+  includeFileRegex:
+  - '.*\.yml'
+  - '.*\.yaml'
+  locations:
+    directories:
+    - /tmp/hello-world-project
+  parentProjects:
+  - name: local-docker-install-project
+
