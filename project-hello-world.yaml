@@ -1,3 +1,33 @@
+# Project to clone a Git repository to a local directory and copy manifests to /tmp/local-docker-install and /tmp/sample-docker-app
+---
+apiVersion: v1-alpha
+kind: GitManifestLocation 
+metadata:
+  name: clone-repositories-manifests
+spec:
+  location: https://github.com/nicc777/verba-cratis-test-projects.git
+  relative_start_directory: /clone-repositories-project 
+---
+apiVersion: v1-alpha
+kind: Project
+metadata:
+  name: clone-repositories-project
+  environments:
+  - default
+spec:
+  locations:
+  - clone-repositories-manifests
+
+
+# Project to install Docker on the local machine
+---
+apiVersion: v1-alpha
+kind: LocalDirectoryManifestLocation
+metadata:
+  name: local-docker-install-manifests
+spec:
+  include_file_regex: .*\.yml|.*\.yaml
+  location: /tmp/local-docker-install
 ---
 apiVersion: v1-alpha
 kind: Project
@@ -6,12 +36,21 @@ metadata:
   environments:
   - default
 spec:
-  includeFileRegex:
-  - '.*\.yml'
-  - '.*\.yaml'
   locations:
-    directories:
-    - /tmp/local-docker-install-project
+  - local-docker-install-manifests
+  parentProjects:
+  - clone-repositories-project
+
+
+# Install a sample app
+---
+apiVersion: v1-alpha
+kind: LocalDirectoryManifestLocation
+metadata:
+  name: sample-install-manifests
+spec:
+  include_file_regex: .*\.yml|.*\.yaml
+  location: /tmp/sample-docker-app
 ---
 apiVersion: v1-alpha
 kind: Project
@@ -20,12 +59,10 @@ metadata:
   environments:
   - default
 spec:
-  includeFileRegex:
-  - '.*\.yml'
-  - '.*\.yaml'
   locations:
-    directories:
-    - /tmp/hello-world-project
+  - sample-install-manifests
   parentProjects:
-  - name: local-docker-install-project
+  - local-docker-install-project
+
+
 
